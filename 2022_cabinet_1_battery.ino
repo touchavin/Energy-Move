@@ -40,11 +40,11 @@ PZEM004Tv30 pzem2(D7, D8);    // (D6)=RX , (D7) = TX   // connect to "TX , RX"
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-void setup() {
+void setup() {                                    // สำหรับเซ็ทค่าตั้งต้น
 
-  Serial.begin(9600);
+  Serial.begin(9600);                             // เลือกช่องแสดงค่า Serial
   Serial.print("Connecting to ");
-  Serial.println(ssid);
+  Serial.println(ssid);                           // ชุดโค้ดสำหรับแสดงการเชื่อมต่อ WIFI
   WiFi.softAPdisconnect(true);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -53,7 +53,7 @@ void setup() {
   Serial.println("WiFi connected");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-  client.setServer(server, port);
+  client.setServer(server, port);                 // ชุดโค้ดสำหรับเชื่อมต่อ Server
   client.setCallback(callback);
 
   pinMode(Trig1,INPUT_PULLUP);  // Lock1 Trig1=Hight close door (กดปุ่มเป็น LOW)
@@ -66,11 +66,11 @@ void setup() {
 
 }
 
-void reconnect() {
+void reconnect() {                                // ฟังก์ชั่นเชื่อมต่อใหม่อีกครั้ง
   while (!client.connected()) {
-    if (client.connect("ESP8266Client", mqtt_user, mqtt_password )) {//(UID, Identify, Scode)
+    if (client.connect("ESP8266Client", mqtt_user, mqtt_password )) {//(UID, Identify, Scode) 
       Serial.println("Server Connected");
-      client.subscribe("msg/swapper");
+      client.subscribe("msg/swapper");            // เป็น Subscribe ใน topic ไหน
     }
     else {
       Serial.println("Try again in 5 s");
@@ -79,7 +79,7 @@ void reconnect() {
   }
 }
 
-void callback(char* topic,byte* payload, unsigned int length) {
+void callback(char* topic,byte* payload, unsigned int length) {       // ฟังก์ชั่นรับ ข้อความ msg
  
   String msg;
   for (int i = 0; i < length; i++) {
@@ -87,14 +87,14 @@ void callback(char* topic,byte* payload, unsigned int length) {
   }
   if (String(topic) == "msg/swapper") {    //  in topic 
     if (msg == "unlock"){                  //  msg command to unlock
-      if (process == 0){
+      if (process == 0){                      // ถ้า process1 เริ่มสั่งที่ ตู้หนึ่ง
         Serial.println("Cabinet1 Start");
         Serial.println("in Process");
         Serial.println(process);
         unlock1 =1;
         cabinetlock1(unlock1);
       }
-      if (process == 3){
+      if (process == 3){                     // ถ้า process3 เริ่มสั่งที่ ตู้สอง
         Serial.println("cabinet2 Start Process 3");
         Serial.println("in Process");
         Serial.println(process);
@@ -121,35 +121,35 @@ void loop() {
   bool ReadTriger1 = digitalRead(Trig1);
   if(ReadTriger1 == LOW && process == 1){     // when closed Locker 1 && process == 1
         unlock1 =0;                           // confirm lock
-        cabinetlock1(unlock1);
+        cabinetlock1(unlock1);                // ไปรันที่ ฟังก์ชัน cabinetlock1 ให้ปิด
         Serial.println("in Process1 comfirm lock");
         Serial.println(process);
            delay(1000);
-        float current = pzem1.current();
+        float current = pzem1.current();      // ประกาศรับค่า กระแสที่ตู้หนึ่ง
         Serial.print("Current: "); Serial.print(current); Serial.println("A");   
        
       if (current >= bipcurrent1){                                  // after check Bip complete to step2 flow
         Serial.println("Cabinetlock1 Close complete");
         Serial.println("Done 1");
           delay(1000);
-        unlock2 =1;                           // confirm lock
-        cabinetlock2(unlock2);
+        unlock2 =1;                           // สั่งให้ 2 เปิด
+        cabinetlock2(unlock2);                // ไปรันที่ ฟังก์ชัน cabinetlock2 ให้เปิด
         Serial.println("Cabinetlock2 Open complete");
         Serial.println("Please connected plug 2");
           delay(1000);
-        if (currentMillis - previousMillis >= interval) {
+        if (currentMillis - previousMillis >= interval) { //ถ้าสถานะค้างเกินเวลา  60 นาทีให้ restart 
        // save the last time you blinked the LED
           previousMillis = currentMillis;
           ESP.restart();
         } 
       }
-      if(current < bipcurrent1 || current == NAN){                               // after check Bip "NOT" complete retry again 
+      if(current < bipcurrent1 || current == NAN){      // after check Bip "NOT" complete retry again 
         Serial.println("Plug1 is not connect");
         unlock1 =1;
         cabinetlock1(unlock1);
           delay(1000);
         Serial.println("Please connect plug1");
-        if (currentMillis - previousMillis >= interval) {
+        if (currentMillis - previousMillis >= interval) { //ถ้าสถานะค้างเกินเวลา  60 นาทีให้ restart 
        // save the last time you blinked the LED
           previousMillis = currentMillis;
           ESP.restart();
@@ -158,10 +158,10 @@ void loop() {
       delay(1000);
     }
 //  continue from 1 to 2 //
-  bool ReadTriger2 = digitalRead(Trig2);      // when closed Locker 2  ไม่ได้ใช้ เพราะปรับ process ออก
+  bool ReadTriger2 = digitalRead(Trig2);      // when closed Locker 2  
   if(ReadTriger2 == LOW && process == 2){     // confirm lock
       unlock2 =0;  
-      cabinetlock2(unlock2);
+      cabinetlock2(unlock2);                  // ไปรันที่ ฟังก์ชัน cabinetlock1 ให้ปิด
         Serial.println("in Process2 comfirm lock");
         Serial.println(process);
            delay(1000);
