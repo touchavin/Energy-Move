@@ -1,5 +1,4 @@
-//BTSW000003_Star8
-
+// For 1 battery
 #include "ESP8266WiFi.h"
 #include "PubSubClient.h"
 #include "PZEM004Tv30.h"
@@ -13,8 +12,6 @@
 //ไมใช้ #define Trig2 15   //TrigLock2 D8      // auxaraly contect Magnetic "SW - GND"
 //ไมใช้ #define Test RX    //Start button      // Local "SW - GND"
 
-//const char* ssid = "iHubzZ_2.4G";
-//const char* password = "Sleep1ess";
 const char* ssid = "AIS 4G Hi-Speed Home WiFi_444913";
 const char* password = "50444913";
 const char* server = "driver.cloudmqtt.com";                    //สำหรับระบุ server
@@ -117,14 +114,10 @@ void loop() {
   client.loop();
   unsigned long currentMillis = millis();
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////// swapping start @1 to 2 /////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////// NIU ใช้แค่ loop แรก ที่ process 1 และ 0 /////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////
+  /////////////////@ start at 1 @///////////////////
+  //////////////////////////////////////////////////
+    
   bool ReadTriger1 = digitalRead(Trig1);
   if(ReadTriger1 == LOW && process == 1){     // when closed Locker 1 && process == 1
         unlock1 =0;                           // confirm lock
@@ -164,8 +157,8 @@ void loop() {
       }
       delay(1000);
     }
-//  
-bool ReadTriger2 = digitalRead(Trig2);      // when closed Locker 2  ไม่ได้ใช้ เพราะปรับ process ออก
+//  continue from 1 to 2 //
+  bool ReadTriger2 = digitalRead(Trig2);      // when closed Locker 2  ไม่ได้ใช้ เพราะปรับ process ออก
   if(ReadTriger2 == LOW && process == 2){     // confirm lock
       unlock2 =0;  
       cabinetlock2(unlock2);
@@ -175,31 +168,14 @@ bool ReadTriger2 = digitalRead(Trig2);      // when closed Locker 2  ไม่�
         float current = pzem2.current();
         Serial.print("Current: "); Serial.print(current); Serial.println("A");
         Serial.println("Done 2");
-        process=3;
-            
- 
-//      if (current <= bipcurrent1 || current == NAN){                             // after check Bip completed.
-//        Serial.println("Cabinetlock2 Close complete");
-//        Serial.println("Done 2");
-//        process =3;
-//          delay(1000);
-//      }
-//      if(current > bipcurrent2){                               // after check Bip "NOT" complete retry again 
-//        Serial.println("Plug2 is not OUT connect");
-//        unlock2 =1;
-//        cabinetlock2(unlock2);
-//          delay(1000);
-//        Serial.println("Please OUT connect plug2");
-//      } 
-      
+        process=3;    
+
     delay(1000);                
   }
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////// swapping start @2 to 1 /////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////
+  /////////////////@ start at 2 @///////////////////
+  //////////////////////////////////////////////////
 
   bool ReadTriger3 = digitalRead(Trig2);      // when closed Locker 2
   if(ReadTriger3 == LOW && process == 4){    
@@ -210,7 +186,7 @@ bool ReadTriger2 = digitalRead(Trig2);      // when closed Locker 2  ไม่�
            delay(1000);
         float current = pzem2.current();
         Serial.print("Current: "); Serial.print(current); Serial.println("A");
-        Serial.print("Current: "); Serial.print(pzem1.current()); Serial.println("A");            
+            
       if (current >= bipcurrent2){                             // after check Bip complete to step2 flow
         Serial.println("Cabinetlock3 Close complete");
         Serial.println("Done 4");
@@ -226,7 +202,7 @@ bool ReadTriger2 = digitalRead(Trig2);      // when closed Locker 2  ไม่�
           ESP.restart();
         } 
       }
-      if(current < bipcurrent2  ||  current == NAN){                               // after check Bip "NOT" complete retry again 
+      if(current < bipcurrent2){                               // after check Bip "NOT" complete retry again 
         Serial.println("Plug2 is not connect");
         unlock3 =1;
         cabinetlock3(unlock3);
@@ -235,7 +211,7 @@ bool ReadTriger2 = digitalRead(Trig2);      // when closed Locker 2  ไม่�
       }
       delay(1000);
     }
-
+//  continue from 2 to 1 //
   bool ReadTriger4 = digitalRead(Trig1);      // when closed Locker 1
   if(ReadTriger4 == LOW && process == 5){    // confirm lock
         unlock4 =0;                           // confirm lock
@@ -244,28 +220,9 @@ bool ReadTriger2 = digitalRead(Trig2);      // when closed Locker 2  ไม่�
         Serial.println(process);
            delay(1000);
         float current = pzem1.current();
-        Serial.print("Current: "); Serial.print(current); Serial.println("A"); 
+        Serial.print("Current: "); Serial.print(current); Serial.println("A");
         Serial.println("Done 4");
-        process=0;
-          
-//      if (current <= bipcurrent1){                             // after check Bip complete to 2Second flow
-//        Serial.println("Cabinetlock3 Close complete");
-//        Serial.println("Done 5");
-//          delay(1000);
-//          process =0;
-//          if (currentMillis - previousMillis >= interval) {
-       // save the last time you blinked the LED
-//          previousMillis = currentMillis;
-//          ESP.restart();
-//        }
-//      }
-//      if(current > bipcurrent1){                               // after check Bip "NOT" complete retry again 
-//        Serial.println("Plug1 is not OUT connect");
-//        unlock4 =1;
-//        cabinetlock4(unlock4);
-//          delay(1000);
-//        Serial.println("Please OUT connect plug1");
-//      }
+        process=0; 
     delay(1000);                
   }
   
@@ -314,7 +271,7 @@ void cabinetlock3(int unlock3) {
   else if (unlock3 == 0) {
     Serial.println("Lock3!");
     digitalWrite(Relay2,HIGH);
-    delay(500);
+    delay(500);    
   }  
 }
 
