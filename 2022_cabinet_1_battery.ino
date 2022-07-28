@@ -168,8 +168,8 @@ void loop() {
         float current = pzem2.current();
         Serial.print("Current: "); Serial.print(current); Serial.println("A");
         Serial.println("Done 2");
-        process=3;    
-
+        process=3;                            // ประตู 2 ปิดเรียบร้อยรอไปยัง Process 3 เพื่อรอให้มีการสั่งเปิด จาก server 
+                                              // เป็นการแยก Status ที่ประตูปิดทั้งสอง แต่จะเปิดประตูที่ 2 ก่อนแทน  
     delay(1000);                
   }
 
@@ -182,17 +182,17 @@ void loop() {
         unlock3 =0;                           // confirm lock
         cabinetlock3(unlock3);
         Serial.println("in Process4 comfirm lock");
-        Serial.println(process);
+        Serial.println(process);              // มีการล็อค ต่อไปเซ็กกระแสว่า เสียบชาร์จมั้ย
            delay(1000);
         float current = pzem2.current();
         Serial.print("Current: "); Serial.print(current); Serial.println("A");
             
-      if (current >= bipcurrent2){                             // after check Bip complete to step2 flow
+      if (current >= bipcurrent2){                    // after check Bip complete to flow
         Serial.println("Cabinetlock3 Close complete");
         Serial.println("Done 4");
           delay(1000);
-        unlock4 =1;                           // confirm lock
-        cabinetlock4(unlock4);
+        unlock4 =1;                           // confirm to unlock
+        cabinetlock4(unlock4);                // ไปฟังก์ชั่น Cabinetlock4 สั่งประตู 1 เปิด
         Serial.println("Cabinetlock3 Open complete");
         Serial.println("Please connected plug 1");
           delay(1000);
@@ -202,9 +202,9 @@ void loop() {
           ESP.restart();
         } 
       }
-      if(current < bipcurrent2){                               // after check Bip "NOT" complete retry again 
+      if(current < bipcurrent2){                // after check Bip "NOT" complete retry again 
         Serial.println("Plug2 is not connect");
-        unlock3 =1;
+        unlock3 =1;                             // กลับไปเปิดประตู 2 อีกครั้งเพราะ ไม่เสียบแบต ไม่เจอกระแส
         cabinetlock3(unlock3);
           delay(1000);
         Serial.println("Please connect plug2");
@@ -213,7 +213,7 @@ void loop() {
     }
 //  continue from 2 to 1 //
   bool ReadTriger4 = digitalRead(Trig1);      // when closed Locker 1
-  if(ReadTriger4 == LOW && process == 5){    // confirm lock
+  if(ReadTriger4 == LOW && process == 5){     // confirm lock
         unlock4 =0;                           // confirm lock
         cabinetlock4(unlock4);
         Serial.println("in Process5 comfirm lock");
@@ -222,8 +222,8 @@ void loop() {
         float current = pzem1.current();
         Serial.print("Current: "); Serial.print(current); Serial.println("A");
         Serial.println("Done 4");
-        process=0; 
-    delay(1000);                
+        process=0;                           //ปิดเรียบร้อยแล้ว กลับไป loop ที่ process 0  
+    delay(1000);                              //  เพื่อรอ คำสั่ง เริ่มเปิดที่ตู้ 1 ก่อน
   }
   
 }
