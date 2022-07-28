@@ -137,10 +137,12 @@ void loop() {
         Serial.println(process);
            delay(1000);
            
-        float current = pzem1.current();
-        Serial.print("Current: "); Serial.print(current); Serial.println("A");    // 
+        float current1 = pzem1.current();
+        Serial.print("Current: "); Serial.print(current1); Serial.println("A");    // 
+        float current2 = pzem2.current();
+        Serial.print("Current: "); Serial.print(current2); Serial.println("A");    //
         
-      if (current >= bipcurrent1){                                                // after check Bip complete to step2 flow
+      if (current1 >= bipcurrent1 && current2 >= bipcurrent2){                                                // after check Bip complete to step2 flow
         Serial.println("Cabinetlock1 Close complete");
         Serial.println("Done 1");
           delay(1000);
@@ -151,7 +153,7 @@ void loop() {
           ESP.restart();
         } 
       }
-      if(current < bipcurrent1 || current == NAN){                               // after check Bip "NOT" complete retry again 
+      if(current1 < bipcurrent1 || current2 < bipcurrent2){                               // after check Bip "NOT" complete retry again 
         Serial.println("Plug1 is not connect");
         unlock1 =1;
         cabinetlock1(unlock1);

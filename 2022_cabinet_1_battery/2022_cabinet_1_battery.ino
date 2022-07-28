@@ -31,8 +31,8 @@ int unlock2 = 0;
 int unlock3 = 0;   
 int unlock4 = 0;
 int process = 0;
-float bipcurrent1 = 0.05;      // For check current connection with battery A
-float bipcurrent2 = 0.05;      // unconnect plug
+float bipcurrent1 = 0.1;      // For check current connection with battery A
+float bipcurrent2 = 0.1;      // unconnect plug
 
 PZEM004Tv30 pzem1(D5, D6);    // (D3)=RX , (D5) = TX   // connect to "TX , RX"
 PZEM004Tv30 pzem2(D7, D8);    // (D6)=RX , (D7) = TX   // connect to "TX , RX"
