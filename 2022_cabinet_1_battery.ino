@@ -1,4 +1,4 @@
-// For 1 battery
+// Cabinet For 1 battery slot
 #include "ESP8266WiFi.h"
 #include "PubSubClient.h"
 #include "PZEM004Tv30.h"
@@ -137,7 +137,7 @@ void loop() {
         Serial.println("Cabinetlock2 Open complete");
         Serial.println("Please connected plug 2");
           delay(1000);
-        if (currentMillis - previousMillis >= interval) { //ถ้าสถานะค้างเกินเวลา  60 นาทีให้ restart 
+        if (currentMillis - previousMillis >= interval) { //ถ้าสถานะค้างเกินเวลา  10 นาทีให้ restart 
        // save the last time you blinked the LED
           previousMillis = currentMillis;
           ESP.restart();
@@ -149,7 +149,7 @@ void loop() {
         cabinetlock1(unlock1);
           delay(1000);
         Serial.println("Please connect plug1");
-        if (currentMillis - previousMillis >= interval) { //ถ้าสถานะค้างเกินเวลา  60 นาทีให้ restart 
+        if (currentMillis - previousMillis >= interval) { //ถ้าสถานะค้างเกินเวลา  10 นาทีให้ restart 
        // save the last time you blinked the LED
           previousMillis = currentMillis;
           ESP.restart();
