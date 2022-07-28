@@ -40,7 +40,7 @@ PZEM004Tv30 pzem2(D7, D8);    // (D6)=RX , (D7) = TX   // connect to "TX , RX"
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-void setup() {                                    // สำหรับเซ็ทค่าตั้งต้น
+void setup() {                                    // สำหรับเซ็ทค่าตั้งต้Mน
 
   Serial.begin(9600);                             // เลือกช่องแสดงค่า Serial
   Serial.print("Connecting to ");
